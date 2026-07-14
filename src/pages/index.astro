@@ -1,0 +1,186 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const pillars = [
+  { n: '01', title: 'Research', body: 'Postdoctoral research at the University of Amsterdam\'s Computational Science Lab — the information theory of health: disease and symptom networks, higher-order interactions, and causality in multimorbidity.' },
+  { n: '02', title: 'Consulting', body: 'Independent computational modelling, data science and machine-learning work — turning messy, interconnected data into models teams can actually act on. Co-founder of CausalixAI.' },
+  { n: '03', title: 'Teaching', body: 'Years of lecturing and supervising in computational science at UvA — from stochastic simulation and data analysis to student thesis projects.' },
+];
+
+const catLabel: Record<string, string> = {
+  'multimorbidity-health-networks': 'Multimorbidity & networks',
+  'information-theory-methods': 'Information theory',
+  'cross-domain-applications': 'Applications',
+};
+const featured = (await getCollection('publications'))
+  .map((e) => e.data)
+  .filter((p) => p.featured)
+  .sort((a, b) => b.year - a.year);
+
+const domains = ['Cardiovascular disease', 'Depression & mental health', 'Ageing & multimorbidity', 'Genomics (GWAS)', 'Gut microbiome', 'Economic systems'];
+---
+<Base field="hero">
+  <!-- HERO -->
+  <section class="hero-os">
+    <div class="hero-os-top">
+      <p class="thesis rise">More than the sum of its parts</p>
+      <h1 class="hero-os-title rise"><span>Complex data and interconnected systems,</span> <span class="soft">made clear.</span></h1>
+    </div>
+    <div class="hero-os-id rise">
+      <p class="id-name">Cillian Hourican</p>
+      <p class="id-role">Postdoctoral researcher, University of Amsterdam · independent consultant.<br />Computational science · machine learning · networks · information theory.</p>
+      <div class="id-cta">
+        <a class="btn btn--pop" href="/consulting">Book a call <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn--ghost" href="/publications">Read the research</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- THREADS (was pillars) -->
+  <section class="section container reveal">
+    <div class="section-head">
+      <p class="eyebrow"><span class="idx">01</span>What I do</p>
+      <h2>Three threads, one toolkit.</h2>
+      <p class="muted">The same toolkit — computational science, machine learning, networks and information theory — runs through my research, my consulting, and my teaching.</p>
+    </div>
+    <div class="threads">
+      {pillars.map((p) => (
+        <div class="thread">
+          <span class="thread-n">{p.n}</span>
+          <div class="thread-body">
+            <h3>{p.title}</h3>
+            <p class="muted">{p.body}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- PUBLICATIONS — oversized editorial index -->
+  <section class="section container reveal">
+    <div class="section-head">
+      <p class="eyebrow"><span class="idx">02</span>Selected work</p>
+      <h2>Recent publications.</h2>
+      <p class="muted">A few highlights — the full, categorised list lives on the <a href="/publications">publications page</a>, or explore everything as an <a href="/map">interactive map</a>.</p>
+    </div>
+    <ul class="pub-index">
+      {featured.map((f) => (
+        <li class="pub-row">
+          <a class="pub-row-link" href="/publications">
+            <span class="pr-year">{f.year}</span>
+            <div class="pr-main">
+              <span class="pr-tag">{catLabel[f.category]}</span>
+              <h3 class="pr-title">{f.title}</h3>
+              <p class="pr-tldr muted">{f.tldr}</p>
+            </div>
+            <span class="pr-venue mono">{f.venue}<span class="pr-arrow" aria-hidden="true">↗</span></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- CROSS-DOMAIN STRIP -->
+  <section class="section--tight reveal">
+    <div class="container domain-strip">
+      <p class="eyebrow"><span class="idx">03</span>Across domains</p>
+      <ul class="domain-list">
+        {domains.map((d) => <li>{d}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- CONSULTING TEASER -->
+  <section class="section container reveal">
+    <div class="consult-cta">
+      <div class="consult-copy">
+        <p class="eyebrow" style="color: var(--pop-strong)"><span class="idx">04</span>Consulting</p>
+        <h2>Freelance modelling &amp; data work.</h2>
+        <p class="muted">Computational modelling, data science and statistics · machine learning · network and causal analysis · workshops and training. Available for freelance engagements alongside my academic work.</p>
+        <div class="hero-cta">
+          <a class="btn" href="/consulting">See how I can help <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost" href="mailto:c.j.hourican@uva.nl">Get in touch</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* HERO — bold editorial, content lives in the field */
+  .hero-os { position: relative; min-height: min(92vh, 860px); display: flex; flex-direction: column; justify-content: center;
+    padding: clamp(4.5rem, 11vh, 8rem) clamp(1.2rem, 5vw, 3.2rem) clamp(3rem, 9vh, 5.5rem); }
+  .thesis { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.26em; font-size: 0.72rem; color: var(--pop-strong); margin: 0 0 1.5rem; }
+  .hero-os-title { font-family: var(--font-display); font-weight: 600; line-height: 0.98; letter-spacing: -0.02em;
+    font-size: clamp(2.5rem, 7vw, 6.2rem); max-width: 15ch; margin: 0 0 0 -0.03em; text-wrap: balance; }
+  .hero-os-title .soft { font-weight: 250; }
+  .hero-os-id { position: absolute; right: clamp(1.2rem, 5vw, 3.2rem); bottom: clamp(2rem, 8vh, 4.5rem); max-width: 34ch; text-align: right; }
+  .id-name { font-family: var(--font-display); font-weight: 600; font-size: 1.12rem; margin: 0; }
+  .id-role { color: var(--muted); font-size: 0.9rem; margin: 0.4rem 0 1.1rem; }
+  .id-cta { display: flex; gap: 0.7rem; justify-content: flex-end; flex-wrap: wrap; }
+  @media (max-width: 860px) {
+    .hero-os { min-height: auto; padding-top: 5.5rem; }
+    .hero-os-id { position: static; text-align: left; max-width: none; margin-top: 2.8rem; }
+    .id-cta { justify-content: flex-start; }
+  }
+
+  /* load choreography */
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); filter: blur(5px); } to { opacity: 1; transform: none; filter: none; } }
+  .hero-os .rise { animation: rise 0.9s var(--ease) both; }
+  .hero-os .thesis.rise { animation-delay: 0.1s; }
+  .hero-os .hero-os-title.rise { animation-delay: 0.22s; animation-duration: 1.05s; }
+  .hero-os .hero-os-id.rise { animation-delay: 0.5s; }
+
+  /* section decode-on-reveal */
+  :global(.js-reveal) .reveal { opacity: 0; transform: translateY(18px); filter: blur(3px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), filter 0.6s var(--ease); }
+  .reveal.is-in { opacity: 1; transform: none; filter: none; }
+  .eyebrow .idx { font-family: var(--font-mono); color: var(--pop-strong); margin-right: 0.7em; letter-spacing: 0.02em; }
+
+  /* THREADS — editorial, type-driven, field shows through */
+  .threads { display: flex; flex-direction: column; }
+  .thread { display: grid; grid-template-columns: clamp(2.6rem, 7vw, 5rem) 1fr; gap: clamp(1rem, 4vw, 3rem); align-items: start; padding: clamp(1.4rem, 3vw, 2.2rem) 0; border-top: 1px solid var(--border); }
+  .thread:last-child { border-bottom: 1px solid var(--border); }
+  .thread-n { font-family: var(--font-display); font-weight: 200; font-size: clamp(1.8rem, 4.5vw, 3.2rem); color: var(--muted); line-height: 1; }
+  .thread-body h3 { font-size: var(--fs-500); margin-bottom: 0.4rem; }
+  .thread-body p { max-width: 62ch; }
+
+  /* PUBLICATIONS — oversized editorial index */
+  .pub-index { list-style: none; padding: 0; margin: 0; }
+  .pub-row { border-top: 1px solid var(--border); }
+  .pub-row:last-child { border-bottom: 1px solid var(--border); }
+  .pub-row-link { display: grid; grid-template-columns: auto 1fr auto; gap: clamp(1rem, 4vw, 3rem); align-items: baseline;
+    padding: clamp(1.4rem, 3vw, 2.4rem) 0; text-decoration: none; color: inherit; transition: padding-left 0.28s var(--ease); }
+  .pub-row-link:hover { padding-left: 0.7rem; }
+  .pr-year { font-family: var(--font-display); font-weight: 200; font-size: clamp(1.6rem, 4vw, 2.7rem); color: var(--muted); line-height: 1; font-variant-numeric: tabular-nums; }
+  .pr-tag { display: inline-block; font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--tag-ink); background: var(--tag-bg); padding: 0.22rem 0.55rem; border-radius: 5px; margin-bottom: 0.6rem; }
+  .pr-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.3rem, 3vw, 2rem); line-height: 1.12; letter-spacing: -0.01em; margin: 0 0 0.5rem; transition: color 0.2s var(--ease); }
+  .pub-row-link:hover .pr-title { color: var(--accent-strong); }
+  .pr-tldr { font-size: 0.95rem; max-width: 68ch; }
+  .pr-venue { font-size: 0.78rem; color: var(--pop-strong); white-space: nowrap; align-self: start; padding-top: 0.7rem; display: inline-flex; gap: 0.4rem; }
+  .pr-arrow { opacity: 0; transition: opacity 0.2s var(--ease), transform 0.2s var(--ease); }
+  .pub-row-link:hover .pr-arrow { opacity: 1; transform: translate(2px, -2px); }
+  @media (max-width: 720px) {
+    .pub-row-link { grid-template-columns: 1fr; gap: 0.5rem; }
+    .pr-year { font-size: 1.4rem; }
+    .pr-venue { padding-top: 0.3rem; }
+  }
+
+  .domain-strip { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3) var(--sp-4); border-block: 1px solid var(--border); padding-block: var(--sp-4); }
+  .domain-list { display: flex; flex-wrap: wrap; gap: 0.6rem 0.8rem; list-style: none; padding: 0; }
+  .domain-list li { font-family: var(--font-display); font-size: 0.95rem; color: var(--ink); background: var(--surface); border: 1px solid var(--border); padding: 0.35rem 0.8rem; border-radius: 999px; }
+
+  .consult-cta { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: clamp(1.75rem, 5vw, 3.5rem); position: relative; overflow: hidden; }
+  .consult-cta::before { content: ''; position: absolute; right: -60px; top: -60px; width: 220px; height: 220px; background: radial-gradient(circle, color-mix(in srgb, var(--pop) 22%, transparent), transparent 70%); }
+  .consult-copy { position: relative; max-width: 60ch; }
+  .consult-copy h2 { margin-block: 0.4rem 0.7rem; }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+</style>
+
+<script>
+  document.documentElement.classList.add('js-reveal');
+  const io = new IntersectionObserver((es) => {
+    es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+</script>

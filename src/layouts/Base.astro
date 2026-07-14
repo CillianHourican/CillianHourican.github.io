@@ -1,0 +1,61 @@
+---
+import '@fontsource-variable/jost';
+import '@fontsource-variable/public-sans';
+import '@fontsource-variable/newsreader';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import InfoField from '../components/InfoField.astro';
+import CustomCursor from '../components/CustomCursor.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  field?: 'hero' | 'ambient' | 'none';
+}
+const {
+  title = 'Cillian Hourican — Computational scientist & consultant',
+  description = 'Cillian Hourican — postdoctoral researcher at the University of Amsterdam (Computational Science Lab) and independent consultant in data, modelling and networks. Publications, teaching, and consulting.',
+  field = 'ambient',
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://cillianhourican.com');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#0f7c82" />
+    <script is:inline>
+      (function () {
+        try {
+          var p = new URLSearchParams(location.search).get('theme');
+          var t = (p === 'light' || p === 'dark') ? p : localStorage.getItem('theme');
+          if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    {field !== 'none' && <InfoField variant={field} />}
+    {field !== 'none' && <CustomCursor />}
+    {field !== 'none' && <div class="site-grain" aria-hidden="true"></div>}
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,9 @@
+# LaTeX build artifacts — the served PDFs live in ../public/cv/
+*.aux
+*.log
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.pdf
+*.png

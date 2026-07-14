@@ -1,0 +1,41 @@
+---
+const year = 2026;
+const socials = [
+  { href: 'https://scholar.google.com/citations?user=g3yYn-AAAAAJ', label: 'Google Scholar' },
+  { href: 'https://github.com/CillianHourican', label: 'GitHub' },
+  { href: 'https://www.linkedin.com/in/cillian-hourican', label: 'LinkedIn' },
+  { href: 'mailto:c.j.hourican@uva.nl', label: 'Email' },
+];
+---
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <span class="brand-mark" aria-hidden="true">CH</span>
+      <div>
+        <p class="fb-name">Cillian Hourican</p>
+        <p class="fb-role muted">Computational scientist &amp; independent consultant · Amsterdam</p>
+      </div>
+    </div>
+
+    <nav class="footer-links" aria-label="Elsewhere">
+      {socials.map((s) => <a href={s.href} rel="me noopener">{s.label}</a>)}
+    </nav>
+  </div>
+  <div class="container footer-base">
+    <p class="muted">© {year} Cillian Hourican. Also co-founder of <a href="https://causalix.ai">CausalixAI</a>.</p>
+    <p class="muted mono">Built with Astro.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--border); background: var(--surface-2); margin-top: var(--sp-6); }
+  .footer-inner { display: flex; flex-wrap: wrap; gap: var(--sp-4); justify-content: space-between; align-items: flex-start; padding-block: var(--sp-5) var(--sp-4); }
+  .footer-brand { display: flex; align-items: center; gap: 0.8rem; }
+  .brand-mark { display: inline-grid; place-items: center; width: 40px; height: 40px; background: var(--accent); color: var(--accent-ink); border-radius: 10px; font-family: var(--font-display); font-weight: 600; }
+  .fb-name { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; }
+  .fb-role { font-size: 0.9rem; }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; }
+  .footer-links a { color: var(--ink); text-decoration: none; font-size: 0.92rem; }
+  .footer-links a:hover { color: var(--accent-strong); }
+  .footer-base { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; justify-content: space-between; padding-block: var(--sp-3); border-top: 1px solid var(--border); font-size: 0.85rem; }
+</style>

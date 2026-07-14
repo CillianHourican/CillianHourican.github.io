@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+
+const methods = [
+  { label: 'Email (academic)', value: 'c.j.hourican@uva.nl', href: 'mailto:c.j.hourican@uva.nl' },
+  { label: 'Email (personal)', value: 'cillian.hourican@gmail.com', href: 'mailto:cillian.hourican@gmail.com' },
+  { label: 'LinkedIn', value: 'cillian-hourican', href: 'https://www.linkedin.com/in/cillian-hourican-5460559a' },
+  { label: 'Google Scholar', value: 'Cillian Hourican', href: 'https://scholar.google.com/citations?user=g3yYn-AAAAAJ' },
+  { label: 'GitHub', value: 'CillianHourican', href: 'https://github.com/CillianHourican' },
+  { label: 'Based in', value: 'Amsterdam, Netherlands', href: undefined },
+];
+---
+<Base title="Contact — Cillian Hourican" description="Get in touch with Cillian Hourican — computational scientist and independent consultant based in Amsterdam.">
+  <section class="section container">
+    <div class="section-head">
+      <p class="eyebrow">Contact</p>
+      <h1>Let’s talk.</h1>
+      <p class="lede">Whether it’s a research collaboration, a freelance project, or a workshop — the quickest way to reach me is email. Consulting enquiries especially welcome.</p>
+    </div>
+
+    <div class="grid grid-2 contact-grid">
+      {methods.map((m) => (
+        <div class="card contact-item">
+          <span class="c-label mono">{m.label}</span>
+          {m.href ? (
+            <a class="c-value" href={m.href} target={m.href.startsWith('mailto') ? undefined : '_blank'} rel="noopener">{m.value}</a>
+          ) : (
+            <span class="c-value">{m.value}</span>
+          )}
+        </div>
+      ))}
+    </div>
+
+    <div class="contact-cta">
+      <a class="btn btn--pop" href="mailto:c.j.hourican@uva.nl?subject=Hello%20Cillian">Email me <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact-grid { margin-bottom: var(--sp-5); }
+  .contact-item { display: flex; flex-direction: column; gap: 0.35rem; }
+  .c-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .c-value { font-size: 1.05rem; color: var(--ink); text-decoration: none; font-weight: 500; word-break: break-word; }
+  a.c-value:hover { color: var(--accent-strong); }
+</style>

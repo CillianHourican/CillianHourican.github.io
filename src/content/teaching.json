@@ -1,0 +1,57 @@
+[
+  {
+    "id": "intro-computational-science",
+    "course": "Introduction to Computational Science",
+    "programme": "MSc Computational Science (joint degree)",
+    "level": "MSc",
+    "institution": "University of Amsterdam",
+    "years": "2023 – 2025",
+    "role": "Teaching assistant",
+    "description": "Ran tutorials and supported teaching for the master's introduction to computational science — modelling, simulation and scientific computing — for incoming students.",
+    "order": 6
+  },
+  {
+    "id": "scientific-data-analysis",
+    "course": "Scientific Data Analysis",
+    "programme": "BSc Informatica",
+    "level": "BSc",
+    "institution": "University of Amsterdam",
+    "years": "2022 / 2023",
+    "role": "Teaching assistant",
+    "description": "Computer labs, tutorials and the practical project for a bachelor's data-analysis course, teaching students to work with real data in Python.",
+    "order": 5
+  },
+  {
+    "id": "seminars-computational-science",
+    "course": "Seminars Computational Science",
+    "programme": "MSc Computational Science (joint degree)",
+    "level": "MSc",
+    "institution": "University of Amsterdam",
+    "years": "2021 – 2023",
+    "role": "Co-organiser & teaching assistant",
+    "description": "Co-ran the master's research seminar series, guiding students through reading, presenting and discussing current computational-science research.",
+    "order": 4
+  },
+  {
+    "id": "modelling-system-dynamics",
+    "course": "Modelling System Dynamics",
+    "programme": "MSc Information Studies",
+    "level": "MSc",
+    "institution": "University of Amsterdam",
+    "years": "2019 – 2021",
+    "role": "Teaching assistant",
+    "description": "Weekly tutorials and assignment feedback for system-dynamics modelling, working primarily with Vensim and AnyLogic.",
+    "order": 3
+  },
+  {
+    "id": "trinity-statistics-probability",
+    "course": "Statistics & Probability (tutorials)",
+    "programme": "BSc Science / Mathematics",
+    "level": "BSc",
+    "institution": "Trinity College Dublin",
+    "years": "2017 – 2019",
+    "role": "Teaching assistant",
+    "description": "Lab tutorials for a first-year statistics course (teaching R) and tutorials for an introductory probability module for mathematics students.",
+    "order": 2
+  }
+]

@@ -1,0 +1,68 @@
+\documentclass[10pt]{article}
+\usepackage{cvstyle}
+
+% --- freelance-specific helpers ---
+\newcommand{\service}[2]{%
+  \begin{minipage}[t]{0.47\textwidth}\RaggedRight\hyphenpenalty=10000\exhyphenpenalty=10000
+    {\headfont\bfseries\color{cvteal}#1}\\[2pt]
+    \hyphenpenalty=50\exhyphenpenalty=50{\small\color{cvmuted}#2}
+  \end{minipage}}
+\newcommand{\step}[3]{%
+  \begin{minipage}[t]{0.305\textwidth}\RaggedRight
+    {\headfont\bfseries\color{cvpop}#1}\ \ {\headfont\bfseries\small\color{cvink}#2}\\[2pt]
+    {\small\color{cvmuted}#3}
+  \end{minipage}}
+% \work{description}{venue, year}
+\newcommand{\work}[2]{\item #1\ {\small\color{cvmuted}(#2)}}
+
+\begin{document}
+
+\cvheader{Computational modelling \& data-science consultant · available for freelance work}{%
+  {\color{cvteal}\faEnvelope}~\href{mailto:cillian.hourican@gmail.com}{cillian.hourican@gmail.com}\quad
+  {\color{cvteal}\faGlobe}~\href{https://cillianhourican.com}{cillianhourican.com}\quad
+  {\color{cvteal}\faLinkedin}~\href{https://www.linkedin.com/in/cillian-hourican-5460559a}{in/cillian-hourican}\quad
+  {\color{cvteal}\faGithub}~\href{https://github.com/CillianHourican}{CillianHourican}%
+}
+
+\vspace{5pt}
+{\RaggedRight
+I help teams turn complex, interconnected data into models they can act on --- a PhD-level grounding in statistics, machine learning, networks and causal inference, applied to your problem, validated honestly, and explained without the jargon. Currently a postdoctoral researcher at the University of Amsterdam, and available for freelance data and modelling work.\par
+\vspace{3pt}
+{\color{cvmuted}\textbf{How I work:} I frame the real question rather than the model, honestly stress-test what I build, and hand over plain-language results plus code your team can maintain.}\par}
+
+\section{What I do}
+\service{Predictive modelling \& simulation}{Forecasting, statistical and surrogate models, and uncertainty quantification --- turning messy, historical data into models you can base decisions on.}\hfill
+\service{Machine learning \& AI solutions}{Building, validating and explaining ML models, and the dependable pipelines and tools around them, with a scientist's eye for what actually generalises.}
+\par\vspace{4pt}
+\service{Networks, complex systems \& causal inference}{Untangling interconnected systems: network analysis, higher-order interactions and causal reasoning that go beyond pairwise correlation. My core research niche.}\hfill
+\service{Workshops \& training}{Hands-on training and guest lectures in Python/R, modelling and data analysis, to build the capability inside your own team.}
+
+\section{Selected work}
+\begin{itemize}
+  \work{Early-stage coronary-artery-disease screening from routine, low-cost biomarkers --- machine-learning models sharpened with synthetic ``virtual patient'' data.}{European Heart Journal --- Digital Health, 2024}
+  \work{Multilayer network analysis linking cardiovascular disease and depression to specific molecular biomarkers, validated in the UK~Biobank.}{Psychological Medicine, 2025}
+  \work{An open, bias-aware information-theoretic workflow that detects higher-order, ``together-only'' risk combinations across a large ageing cohort.}{PLOS Computational Biology, 2026}
+  \work{Efficient search algorithms that locate synergistic variable combinations in high-dimensional datasets without exhaustive enumeration.}{Entropy, 2024}
+\end{itemize}
+
+\section{Range \& perspective}
+{\RaggedRight
+\textbf{Comfortable in unfamiliar territory.} My research alone has spanned cardiovascular disease, depression, ageing, genomics and the gut microbiome --- each a new domain to learn fast and model rigorously; the methods travel. I also co-founded \href{https://causalix.ai}{CausalixAI}, building AI-powered causal-modelling tools, so I bring a product and delivery perspective alongside the research.\par}
+
+\section{Background}
+\entry{Apr 2026 -- present}{\etitle{Postdoctoral Researcher} --- \eplace{Computational Science Lab, University of Amsterdam}}
+\entry{2022 -- present}{\etitle{PhD, Computational Science} --- \eplace{University of Amsterdam}\ \edetail{(defense scheduled 27 November 2026)}}
+\entry{Ongoing}{\etitle{Co-founder, CausalixAI} --- \eplace{AI-powered causal-modelling tools}}
+\entry{2021}{\etitle{MSc Computational Science} \edetail{(GPA 8/10)} --- \eplace{University of Amsterdam}}
+\entry{2018}{\etitle{BA (Mod.) Mathematics} \edetail{First-Class Honours} --- \eplace{Trinity College Dublin}}
+
+\section{Skills \& tools}
+\skillrow{Languages}{Python, R}
+\skillrow{Modelling}{Predictive \& statistical modelling · machine learning \& deep learning · uncertainty quantification}
+\skillrow{Specialisms}{Networks · causal inference · information theory · complex systems · simulation (Vensim, AnyLogic)}
+
+\enlargethispage{2.5\baselineskip}
+\vspace{3pt}
+{\RaggedRight\small\color{cvmuted}Available for freelance engagements, remote or on-site in the Netherlands and EU. \ \ {\headfont\bfseries\color{cvpop}Tell me what you are trying to decide --- an initial conversation is free:}\ \href{mailto:cillian.hourican@gmail.com}{\color{cvteal}cillian.hourican@gmail.com}.\par}
+
+\end{document}

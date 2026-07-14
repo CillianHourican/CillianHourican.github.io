@@ -1,0 +1,139 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const pubs = (await getCollection('publications')).map((e) => e.data).sort((a, b) => b.year - a.year);
+
+const education = [
+  { period: '2022 – present', title: 'PhD in Computational Science', place: 'University of Amsterdam', detail: 'Doctoral research on “Dynamic Symptom Networks to study Multimorbidity” — at the intersection of information theory, network science and causality; supervised by Dr. Rick Quax. Defense scheduled.' },
+  { period: '2021', title: 'MSc Computational Science (GPA 8)', place: 'University of Amsterdam', detail: 'Thesis on non-intrusive uncertainty quantification of a 3D in-stent restenosis model using active learning and adaptive surrogate modelling.' },
+  { period: '2018 – 2019', title: 'Research Student, Optimisation & Machine Learning', place: 'Trinity College Dublin', detail: 'Online convex optimisation and bandits; deep learning coursework (CNNs, image classification).' },
+  { period: '2018', title: 'BA (Mod.) Mathematics, First-Class Honours', place: 'Trinity College Dublin', detail: 'Final-year project on estimating social networks with stochastic block models and multiplex networks.' },
+];
+
+const experience = [
+  { period: 'Apr 2026 – present', title: 'Postdoctoral Researcher', place: 'Computational Science Lab, University of Amsterdam', detail: 'Research on higher-order interactions, networks and causality in health and complex systems.' },
+  { period: '2019 – 2021', title: 'Teaching Assistant', place: 'University of Amsterdam', detail: 'Tutorials and assignments for Modelling System Dynamics (Vensim, AnyLogic).' },
+  { period: '2017 – 2019', title: 'Teaching Assistant', place: 'Trinity College Dublin', detail: 'Lab tutorials for first-year statistics (R) and introductory probability.' },
+  { period: '2017', title: 'Summer Research Student', place: 'Trinity College Dublin', detail: 'Changepoint-detection algorithms: frequentist and Bayesian (Gibbs sampling) approaches.' },
+  { period: '2016', title: 'Summer Research Student', place: 'LM Ericsson, Ireland', detail: 'Graph-theoretic methods for self-organising networks.' },
+];
+
+const talks = [
+  'Poster — International Conference on Network Science (NetSci), 2025',
+  'Oral — “Removing unnecessary hyperedges in information-theoretic hypergraphs through O-information”, NetSci, Vienna, 2023',
+  'Poster — Dutch Computational Science Day (DUCOMS), Utrecht, 2023',
+  'Poster — Dutch NetSci, Delft, 2023',
+  'Participant — Gateway to Global Aging research hackathon, USC, 2023',
+  'Attendee — Decomposing Multivariate Information in Complex Systems (demics23), Dresden, 2023',
+];
+
+const skills = ['Python', 'R', 'Machine learning & deep learning', 'Statistical & predictive modelling', 'Network science', 'Information theory & causality', 'Simulation (Vensim, AnyLogic)', 'Uncertainty quantification'];
+---
+<Base title="CV — Cillian Hourican" description="Curriculum vitae of Cillian Hourican — postdoctoral researcher (University of Amsterdam) and independent consultant.">
+  <section class="section container cv">
+    <div class="cv-head">
+      <div>
+        <p class="eyebrow">Curriculum Vitae</p>
+        <h1>Cillian Hourican</h1>
+        <p class="muted">Postdoctoral researcher, Computational Science Lab, University of Amsterdam · independent consultant · Amsterdam</p>
+      </div>
+      <div class="cv-actions">
+        <a class="btn" href="/cv/cillian-hourican-cv-academic.pdf" download>Academic CV (PDF)</a>
+        <a class="btn btn--ghost" href="/cv/cillian-hourican-cv-freelance.pdf" download>Freelance CV (PDF)</a>
+      </div>
+    </div>
+
+    <div class="cv-summary card">
+      <p>Mathematician and computational scientist with a strong foundation in statistics, modelling, machine learning and networks. I build rigorous models of complex, interconnected systems — and explain them clearly. Currently a postdoctoral researcher in the Computational Science Lab at the University of Amsterdam (PhD defense scheduled), and available for freelance data and modelling work.</p>
+    </div>
+
+    <div class="cv-section">
+      <h2 class="sub">Education</h2>
+      <ul class="timeline">
+        {education.map((e) => (
+          <li>
+            <span class="tl-period mono">{e.period}</span>
+            <div class="tl-body">
+              <h3>{e.title}</h3>
+              <p class="tl-place">{e.place}</p>
+              <p class="muted">{e.detail}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="cv-section">
+      <h2 class="sub">Selected publications</h2>
+      <p class="muted cv-pub-note">Full list with plain-language summaries on the <a href="/publications">publications page</a>.</p>
+      <ul class="cv-pubs">
+        {pubs.map((p) => (
+          <li>
+            <span set:html={p.authors.replaceAll('Hourican, C.', '<strong>Hourican, C.</strong>')} />
+            <span> ({p.year}). </span>
+            <em>{p.title}.</em>
+            <span class="cv-venue"> {p.venue}.</span>
+            {p.url && <a class="cv-doi mono" href={p.url} target="_blank" rel="noopener"> ↗</a>}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="cv-section">
+      <h2 class="sub">Experience</h2>
+      <ul class="timeline">
+        {experience.map((e) => (
+          <li>
+            <span class="tl-period mono">{e.period}</span>
+            <div class="tl-body">
+              <h3>{e.title}</h3>
+              <p class="tl-place">{e.place}</p>
+              <p class="muted">{e.detail}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="cv-grid">
+      <div class="cv-section">
+        <h2 class="sub">Technical skills</h2>
+        <ul class="chips">
+          {skills.map((s) => <li class="tag">{s}</li>)}
+        </ul>
+      </div>
+      <div class="cv-section">
+        <h2 class="sub">Talks & conferences</h2>
+        <ul class="talks">
+          {talks.map((t) => <li class="muted">{t}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .cv-head { display: flex; flex-wrap: wrap; gap: var(--sp-4); justify-content: space-between; align-items: flex-start; margin-bottom: var(--sp-4); }
+  .cv-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .cv-summary { margin-bottom: var(--sp-5); }
+  .cv-summary p { max-width: none; }
+  .cv-section { margin-bottom: var(--sp-5); }
+  .sub { font-size: var(--fs-500); margin-bottom: var(--sp-3); padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+  .timeline { list-style: none; padding: 0; display: flex; flex-direction: column; gap: var(--sp-3); }
+  .timeline li { display: grid; grid-template-columns: 130px 1fr; gap: var(--sp-3); }
+  .tl-period { font-size: 0.82rem; color: var(--pop-strong); padding-top: 0.15rem; }
+  .tl-body h3 { font-size: var(--fs-400); }
+  .tl-place { font-weight: 500; color: var(--ink); margin: 0.1rem 0 0.3rem; }
+  .cv-pub-note { margin-top: -0.4rem; margin-bottom: var(--sp-3); }
+  .cv-pubs { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.7rem; }
+  .cv-pubs li { font-size: 0.95rem; line-height: 1.5; padding-left: 1rem; border-left: 2px solid var(--border); }
+  .cv-pubs :global(strong) { color: var(--ink); }
+  .cv-pubs em { color: var(--ink); }
+  .cv-venue { color: var(--pop-strong); }
+  .cv-doi { text-decoration: none; }
+  .chips { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .talks { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.92rem; }
+  .cv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-5); }
+  @media (max-width: 720px) { .timeline li { grid-template-columns: 1fr; gap: 0.3rem; } .cv-grid { grid-template-columns: 1fr; } }
+</style>

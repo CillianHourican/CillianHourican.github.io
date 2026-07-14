@@ -1,0 +1,186 @@
+---
+// InfoField — a perpetually-evolving information network behind the whole page.
+// Stochastic birth–death nodes drift on a slow flow field and form/decay edges by
+// proximity; a live Shannon entropy (of the degree distribution) ticks forever, and
+// three near-neighbour nodes occasionally flare into a synergy triad. It cannot reach
+// a steady state by construction. Pure Canvas 2D, zero dependencies.
+// variant "hero" (homepage) is denser + has the entropy HUD + synergy flares;
+// variant "ambient" (inner pages) is a quieter, distraction-free version.
+interface Props { variant?: 'hero' | 'ambient'; }
+const { variant = 'ambient' } = Astro.props;
+---
+<canvas class="infofield" data-variant={variant} aria-hidden="true"></canvas>
+{variant === 'hero' && (
+  <div class="field-hud mono" aria-hidden="true"><span class="hud-h">H = 0.00 bits</span><span class="hud-n"></span></div>
+)}
+
+<style>
+  .infofield { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; display: block; pointer-events: none; }
+  .field-hud { position: fixed; left: 16px; bottom: 13px; z-index: 40; display: flex; gap: 1.1rem; font-size: 0.66rem; letter-spacing: 0.11em; color: var(--muted); opacity: 0.72; font-variant-numeric: tabular-nums; pointer-events: none; }
+  .field-hud .hud-h { color: var(--pop-strong); }
+  @media (max-width: 720px) { .field-hud .hud-n { display: none; } }
+</style>
+
+<script>
+  function initField() {
+    const canvas = document.querySelector('.infofield') as HTMLCanvasElement | null;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
+    const isHero = (canvas.dataset.variant || 'ambient') === 'hero';
+    const EDGE = isHero ? 0.16 : 0.1;
+    const hudH = document.querySelector('.field-hud .hud-h') as HTMLElement | null;
+    const hudN = document.querySelector('.field-hud .hud-n') as HTMLElement | null;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function readCol() {
+      const s = getComputedStyle(document.documentElement);
+      return { accent: s.getPropertyValue('--accent').trim() || '#0f7c82', pop: s.getPropertyValue('--pop').trim() || '#e4703a' };
+    }
+    let col = readCol();
+    let W = 0, H = 0;
+    function fit() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    fit();
+
+    const rand = (a: number, b: number) => a + Math.random() * (b - a);
+    const R = 132;                     // edge radius
+    function targetCount() { return Math.max(50, Math.min(isHero ? 200 : 115, Math.round((W * H) / (isHero ? 9200 : 15500)))); }
+    let target = targetCount();
+
+    type N = { x: number; y: number; vx: number; vy: number; born: number; life: number; deg: number };
+    let nodes: N[] = [];
+    let now = 0;
+    function spawn(preAge = false) {
+      nodes.push({ x: rand(0, W), y: rand(0, H), vx: rand(-0.3, 0.3), vy: rand(-0.3, 0.3), born: preAge ? -rand(0, 22000) : now, life: rand(20000, 40000), deg: 0 });
+    }
+    for (let i = 0; i < target; i++) spawn(true);
+
+    let ptr: { x: number; y: number } | null = null;
+    window.addEventListener('pointermove', (e) => { ptr = { x: e.clientX, y: e.clientY }; });
+    window.addEventListener('pointerleave', () => { ptr = null; });
+
+    // slow, non-repeating flow field (advances forever)
+    function drift(x: number, y: number, t: number) {
+      return Math.PI * (Math.sin(x * 0.0016 + t * 0.00007) + Math.cos(y * 0.0018 - t * 0.00006) + Math.sin((x + y) * 0.001 + t * 0.00004));
+    }
+    function nAlpha(n: N) {
+      const age = now - n.born, rem = n.life - age;
+      return Math.max(0, Math.min(1, age / 1600, rem / 2200));
+    }
+
+    let entFactor = 1, Hbits = 0, scrollF = 0;
+    let flares: { a: N; b: N; c: N; t0: number }[] = [];
+    let ripples: { x: number; y: number; r: number; a: number }[] = [];
+    let nextFlare = 1200;
+    let lastHud = 0;
+    addEventListener('scroll', () => { scrollF = Math.min(1, window.scrollY / Math.max(1, window.innerHeight)); }, { passive: true });
+
+    function tryFlare() {
+      const live = nodes.filter((n) => nAlpha(n) > 0.6);
+      const tris: [N, N, N][] = [];
+      for (let i = 0; i < live.length && tris.length < 48; i++) {
+        const a = live[i];
+        const near = live.filter((m) => m !== a && Math.hypot(m.x - a.x, m.y - a.y) < R * 0.92);
+        for (let j = 0; j < near.length; j++) for (let k = j + 1; k < near.length; k++) {
+          if (Math.hypot(near[j].x - near[k].x, near[j].y - near[k].y) < R * 0.92) tris.push([a, near[j], near[k]]);
+        }
+      }
+      if (!tris.length) return;
+      const [a, b, c] = tris[(Math.random() * tris.length) | 0];
+      flares.push({ a, b, c, t0: now });
+      ripples.push({ x: (a.x + b.x + c.x) / 3, y: (a.y + b.y + c.y) / 3, r: 6, a: 0.6 });
+    }
+
+    function step(dt: number) {
+      const dtf = Math.min(2.4, dt / 16);
+      if (nodes.length < target && Math.random() < dt / 130) spawn();
+      for (const n of nodes) {
+        const ang = drift(n.x, n.y, now);
+        n.vx = n.vx * 0.94 + Math.cos(ang) * 0.06;
+        n.vy = n.vy * 0.94 + Math.sin(ang) * 0.06;
+        if (ptr) { const dx = ptr.x - n.x, dy = ptr.y - n.y, d = Math.hypot(dx, dy); if (d < 180) { const f = (1 - d / 180) * 0.05; n.vx += (dx / (d + 1)) * f; n.vy += (dy / (d + 1)) * f; } }
+        n.x += n.vx * dtf; n.y += n.vy * dtf;
+        if (n.x < -30) n.x = W + 30; if (n.x > W + 30) n.x = -30;
+        if (n.y < -30) n.y = H + 30; if (n.y > H + 30) n.y = -30;
+      }
+      nodes = nodes.filter((n) => now - n.born < n.life + 2200);
+      if (now > nextFlare) { nextFlare = now + (isHero ? rand(2800, 5500) : rand(6000, 11000)); tryFlare(); }
+    }
+
+    function entropy() {
+      const hist: Record<number, number> = {}; let n = 0;
+      for (const nd of nodes) { if (nAlpha(nd) < 0.5) continue; hist[nd.deg] = (hist[nd.deg] || 0) + 1; n++; }
+      if (n === 0) return;
+      let h = 0; for (const k in hist) { const p = hist[k] / n; h -= p * Math.log2(p); }
+      Hbits = h; entFactor = 0.6 + 0.5 * Math.min(1, h / 3.2);
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, W, H);
+      for (const n of nodes) n.deg = 0;
+      ctx.lineWidth = 0.75; ctx.strokeStyle = col.accent;
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i]; const aa = nAlpha(a); if (aa <= 0) continue;
+        for (let j = i + 1; j < nodes.length; j++) {
+          const b = nodes[j]; const dx = a.x - b.x, dy = a.y - b.y; const d2 = dx * dx + dy * dy;
+          if (d2 < R * R) { const d = Math.sqrt(d2); a.deg++; b.deg++;
+            const al = (1 - d / R) * EDGE * Math.min(aa, nAlpha(b)) * entFactor * (0.9 + 0.35 * scrollF);
+            if (al > 0.004) { ctx.globalAlpha = al; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+          }
+        }
+      }
+      ctx.globalAlpha = 1; ctx.fillStyle = col.accent;
+      for (const n of nodes) { const aa = nAlpha(n); if (aa <= 0) continue; ctx.globalAlpha = 0.55 * aa; ctx.beginPath(); ctx.arc(n.x, n.y, 1.4, 0, 6.2832); ctx.fill(); }
+      ctx.globalAlpha = 1;
+
+      // cursor probe: connect the 3 nearest nodes to the pointer
+      if (ptr) {
+        const near = nodes.filter((n) => nAlpha(n) > 0.4).map((n) => ({ n, d: Math.hypot(n.x - ptr!.x, n.y - ptr!.y) })).sort((p, q) => p.d - q.d).slice(0, 3);
+        ctx.strokeStyle = col.accent; ctx.lineWidth = 0.8;
+        for (const { n, d } of near) { if (d > 220) continue; ctx.globalAlpha = 0.5 * (1 - d / 220); ctx.beginPath(); ctx.moveTo(ptr.x, ptr.y); ctx.lineTo(n.x, n.y); ctx.stroke(); }
+        ctx.globalAlpha = 1;
+      }
+
+      // synergy flares — a transient triad (higher-order interaction), made unmissable
+      const FDUR = 950;
+      flares = flares.filter((f) => now - f.t0 < FDUR);
+      ctx.fillStyle = col.pop; ctx.strokeStyle = col.pop;
+      for (const f of flares) {
+        const a = 1 - (now - f.t0) / FDUR;
+        ctx.globalAlpha = 0.24 * a;
+        ctx.beginPath(); ctx.moveTo(f.a.x, f.a.y); ctx.lineTo(f.b.x, f.b.y); ctx.lineTo(f.c.x, f.c.y); ctx.closePath(); ctx.fill();
+        ctx.globalAlpha = 0.9 * a; ctx.lineWidth = 1.5; ctx.stroke();
+        for (const nd of [f.a, f.b, f.c]) { ctx.globalAlpha = a; ctx.beginPath(); ctx.arc(nd.x, nd.y, 2.6, 0, 6.2832); ctx.fill(); }
+      }
+      ripples = ripples.filter((r) => r.a > 0.02);
+      for (const r of ripples) { ctx.globalAlpha = r.a; ctx.strokeStyle = col.pop; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, 6.2832); ctx.stroke(); r.r += 2.4; r.a *= 0.945; }
+      ctx.globalAlpha = 1;
+
+      entropy();
+      if (isHero && hudH && now - lastHud > 220) { lastHud = now; hudH.textContent = 'H = ' + Hbits.toFixed(2) + ' bits'; if (hudN) hudN.textContent = 'NODES ' + nodes.length; }
+    }
+
+    let raf = 0, prev = 0, paused = false;
+    function loop(t: number) {
+      if (paused) return;
+      const dt = prev ? t - prev : 16; prev = t; now += Math.min(48, dt);
+      step(Math.min(48, dt)); render();
+      raf = requestAnimationFrame(loop);
+    }
+
+    addEventListener('resize', () => { fit(); target = targetCount(); });
+    new MutationObserver(() => { col = readCol(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { paused = true; cancelAnimationFrame(raf); }
+      else if (!reduce) { paused = false; prev = 0; raf = requestAnimationFrame(loop); }
+    });
+
+    if (reduce) { for (let i = 0; i < 140; i++) { now += 16; step(16); } render(); }
+    else { raf = requestAnimationFrame(loop); }
+  }
+  initField();
+</script>

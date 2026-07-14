@@ -1,0 +1,35 @@
+---
+// A crosshair "measurement probe" cursor. Homepage only; disabled on touch / reduced-motion.
+---
+<div class="cursor-probe" aria-hidden="true"><span class="dot"></span></div>
+
+<style>
+  .cursor-probe {
+    position: fixed; top: 0; left: 0; z-index: 9999; width: 24px; height: 24px; margin: -12px 0 0 -12px;
+    border: 1px solid var(--accent); border-radius: 50%; pointer-events: none; opacity: 0;
+    transition: opacity .35s ease, width .18s ease, height .18s ease, margin .18s ease, border-color .2s ease;
+  }
+  .cursor-probe .dot { position: absolute; left: 50%; top: 50%; width: 3px; height: 3px; margin: -1.5px 0 0 -1.5px; border-radius: 50%; background: var(--accent); }
+  .cursor-probe.hot { width: 42px; height: 42px; margin: -21px 0 0 -21px; border-color: var(--pop); }
+  .cursor-probe.hot .dot { background: var(--pop); }
+  @media (hover: hover) and (pointer: fine) {
+    :global(html.cursor-on) { cursor: none; }
+    :global(html.cursor-on a), :global(html.cursor-on button), :global(html.cursor-on input), :global(html.cursor-on .theme-toggle) { cursor: none; }
+  }
+  @media (max-width: 820px) { .cursor-probe { display: none; } }
+</style>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const el = document.querySelector('.cursor-probe') as HTMLElement | null;
+  if (el && fine && !reduce) {
+    document.documentElement.classList.add('cursor-on');
+    let x = innerWidth / 2, y = innerHeight / 2, tx = x, ty = y, shown = false;
+    addEventListener('pointermove', (e) => { tx = e.clientX; ty = e.clientY; if (!shown) { shown = true; el.style.opacity = '1'; } }, { passive: true });
+    addEventListener('pointerover', (e) => { const t = e.target as HTMLElement; if (t.closest && t.closest('a,button,input,.theme-toggle')) el.classList.add('hot'); });
+    addEventListener('pointerout', (e) => { const t = e.target as HTMLElement; if (t.closest && t.closest('a,button,input,.theme-toggle')) el.classList.remove('hot'); });
+    const loop = () => { x += (tx - x) * 0.35; y += (ty - y) * 0.35; el.style.transform = `translate(${x}px, ${y}px)`; requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+  }
+</script>

@@ -1,0 +1,710 @@
+---
+import '@fontsource-variable/newsreader';
+import '@fontsource/spline-sans/300.css';
+import '@fontsource/spline-sans/400.css';
+import '@fontsource/spline-sans/500.css';
+import { getCollection } from 'astro:content';
+
+const pubs = (await getCollection('publications')).map((e) => ({ id: e.id, ...e.data }));
+
+const catHub: Record<string, string> = {
+  'multimorbidity-health-networks': 'h-multimorbidity',
+  'information-theory-methods': 'h-infotheory',
+  'cross-domain-applications': 'h-applications',
+};
+
+const hubs = [
+  { id: 'h-multimorbidity', type: 'hub', title: 'Multimorbidity & health networks', meta: 'core research theme', abs: 'How diseases, symptoms and signs cluster and interact in people living with several conditions at once — modelled as networks rather than counts.' },
+  { id: 'h-infotheory', type: 'hub', title: 'Higher-order interactions & information theory', meta: 'methods, ongoing', abs: 'The mathematics of many-way dependence: synergy, redundancy, O-information and partial information decomposition — and how to estimate them without being fooled.' },
+  { id: 'h-applications', type: 'hub', title: 'Applications across domains', meta: 'collaborations', abs: 'The same modelling toolkit carried into other fields — from cardiovascular risk to the systems behind ageing and health.' },
+];
+
+function paperLinks(p: (typeof pubs)[number]) {
+  const out: { label: string; href: string }[] = [];
+  if (p.url) out.push({ label: p.preprint ? 'View' : 'DOI', href: p.url });
+  if (p.pdf) out.push({ label: 'PDF', href: p.pdf });
+  if (p.code) out.push({ label: 'Code', href: p.code });
+  if (p.arxiv) out.push({ label: 'Preprint', href: p.arxiv });
+  return out;
+}
+
+const paperNodes = pubs.map((p) => ({
+  id: p.id,
+  type: 'paper',
+  title: p.title,
+  meta: `${p.venue}, ${p.year}${p.jointFirst ? ' · joint first author' : p.first ? ' · first author' : ''}`,
+  abs: p.tldr,
+  links: paperLinks(p),
+}));
+
+const projects = [
+  { id: 'proj-causalix', type: 'project', title: 'CausalixAI', meta: 'venture · co-founder', abs: 'A company I co-founded, building AI-powered causal-modelling tools — where the research turns into software teams can use.', links: [{ label: 'Visit', href: 'https://causalix.ai' }] },
+  { id: 'proj-bust', type: 'project', title: 'bust-pid', meta: 'open-source toolkit', abs: 'An open, bias-aware workflow for partial information decomposition on cohort data — the code behind the PLOS Computational Biology paper.', links: [{ label: 'Code', href: 'https://github.com/CillianHourican/bust-pid' }] },
+  { id: 'proj-synnet', type: 'project', title: 'Synergistic-Networks', meta: 'open-source code', abs: 'Open code reproducing the synergistic-network model from the sign–disease-networks perspective.', links: [{ label: 'Code', href: 'https://github.com/CillianHourican/Synergistic-Networks' }] },
+];
+
+const talks = [
+  { id: 'talk-netsci23', type: 'talk', title: 'Removing unnecessary hyperedges through O-information', meta: 'oral · NetSci, Vienna, 2023', abs: 'An oral presentation at the International Conference on Network Science on pruning information-theoretic hypergraphs using O-information.' },
+  { id: 'talk-netsci25', type: 'talk', title: 'Higher-order structure in health data', meta: 'poster · NetSci, 2025', abs: 'A poster at the 2025 International Conference on Network Science presenting recent work on higher-order interactions in health data.' },
+];
+
+const teach = [
+  { id: 'teach-intro', type: 'teach', title: 'Introduction to Computational Science', meta: 'teaching assistant, 2023–2025', abs: 'Tutorials and teaching support for the master’s introduction to computational science — modelling, simulation and scientific computing.' },
+  { id: 'teach-sup', type: 'teach', title: 'Student supervision', meta: '5 daily-supervised projects', abs: 'Master’s and bachelor’s students I supervised day-to-day, on synergy, causal discovery and health-network projects.' },
+];
+
+const nodes = [...hubs, ...paperNodes, ...projects, ...talks, ...teach];
+
+const links: [string, string][] = [];
+for (const p of paperNodes) {
+  const cat = pubs.find((x) => x.id === p.id)!.category;
+  links.push([catHub[cat], p.id]);
+}
+links.push(
+  ['pid-higher-order-multimorbidity-ploscb-2026', 'synergy-search-algorithms-entropy-2024'],
+  ['sign-disease-networks-perspective-2023', 'synergy-search-algorithms-entropy-2024'],
+  ['cvd-depression-multilayer-psychmed-2025', 'bias-in-o-information-estimation-2024'],
+  ['symptoms-daily-functioning-ageing-2026', 'pid-higher-order-multimorbidity-ploscb-2026'],
+  ['cvd-depression-multilayer-psychmed-2025', 'cad-ml-augmented-virtual-data-2024'],
+  ['proj-bust', 'pid-higher-order-multimorbidity-ploscb-2026'], ['proj-bust', 'h-infotheory'],
+  ['proj-synnet', 'sign-disease-networks-perspective-2023'], ['proj-synnet', 'h-infotheory'],
+  ['proj-causalix', 'h-applications'], ['proj-causalix', 'h-multimorbidity'],
+  ['talk-netsci23', 'bias-in-o-information-estimation-2024'], ['talk-netsci23', 'h-infotheory'],
+  ['talk-netsci25', 'h-multimorbidity'],
+  ['teach-intro', 'h-applications'], ['teach-sup', 'h-infotheory'], ['teach-sup', 'proj-bust'],
+);
+
+const tour = [
+  'h-multimorbidity', 'pid-higher-order-multimorbidity-ploscb-2026', 'sign-disease-networks-perspective-2023', 'cvd-depression-multilayer-psychmed-2025', 'symptoms-daily-functioning-ageing-2026',
+  'h-infotheory', 'synergy-search-algorithms-entropy-2024', 'bias-in-o-information-estimation-2024', 'proj-bust', 'talk-netsci23',
+  'h-applications', 'cad-ml-augmented-virtual-data-2024', 'proj-causalix', 'teach-intro',
+];
+
+const mapData = JSON.stringify({ nodes, links, tour });
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>A Map of My Research — Cillian Hourican</title>
+  <meta name="description" content="An interactive map of Cillian Hourican's research — papers, projects, talks and teaching, drawn as they connect." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <style>
+    :root{
+      --paper:#F4EFE4;
+      --paper-deep:#ECE5D5;
+      --ink:#2C3540;
+      --ink-soft:#6B7480;
+      --line:rgba(44,53,64,0.14);
+      --c-paper:#C98A7D;   /* publications — dusty rose */
+      --c-project:#7A9E7E; /* projects — moss */
+      --c-talk:#8A93C4;    /* talks — cornflower */
+      --c-teach:#D9A85C;   /* teaching — ochre */
+      --c-hub:#3E4A58;     /* themes — deep ink */
+    }
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{height:100%;overflow:hidden;background:var(--paper);color:var(--ink);
+      font-family:'Spline Sans',system-ui,sans-serif}
+    canvas{display:block;position:fixed;inset:0;touch-action:none;cursor:grab}
+    canvas.dragging{cursor:grabbing}
+
+    header{position:fixed;top:0;left:0;right:0;z-index:20;padding:20px 22px 0;
+      pointer-events:none}
+    .name{font-family:'Newsreader Variable',serif;font-weight:500;
+      font-size:clamp(21px,4.5vw,28px);letter-spacing:0.01em}
+    .tagline{font-family:'Newsreader Variable',serif;font-style:italic;font-weight:300;
+      font-size:14.5px;color:var(--ink-soft);margin-top:4px}
+
+    .backlink{position:fixed;top:18px;right:20px;z-index:25;pointer-events:auto;
+      font-family:'Newsreader Variable',serif;font-style:italic;font-size:14px;
+      color:var(--ink-soft);text-decoration:none;background:rgba(255,253,247,0.85);
+      border:1px solid var(--line);border-radius:100px;padding:7px 15px;
+      box-shadow:0 1px 3px rgba(44,53,64,0.06);transition:color .2s}
+    .backlink:hover{color:var(--ink)}
+
+    .legend{position:fixed;bottom:0;left:0;right:0;z-index:20;
+      padding:12px 16px calc(16px + env(safe-area-inset-bottom));
+      display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
+      background:linear-gradient(to top,rgba(244,239,228,0.95) 40%,transparent)}
+    .legend::-webkit-scrollbar{display:none}
+    .chip{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:8px 15px;
+      border-radius:100px;border:1px solid var(--line);background:rgba(255,253,247,0.85);
+      font-size:12.5px;color:var(--ink);cursor:pointer;user-select:none;
+      box-shadow:0 1px 3px rgba(44,53,64,0.06);transition:all .25s ease}
+    .chip .dot{width:9px;height:9px;border-radius:50%}
+    .chip.faded{opacity:0.4}
+
+    #intro{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;text-align:center;padding:32px;
+      background:rgba(244,239,228,0.94);transition:opacity .9s ease;cursor:pointer}
+    #intro.gone{opacity:0;pointer-events:none}
+    #intro h1{font-family:'Newsreader Variable',serif;font-weight:300;
+      font-size:clamp(30px,7.5vw,52px);line-height:1.15;max-width:16ch;color:var(--ink)}
+    #intro h1 i{font-style:italic;color:var(--c-paper)}
+    #intro p{margin-top:18px;color:var(--ink-soft);font-size:15px;max-width:36ch;
+      line-height:1.65;font-weight:300}
+    #intro .hint{margin-top:36px;font-family:'Newsreader Variable',serif;font-style:italic;
+      font-size:15px;color:var(--ink-soft);animation:pulse 2.6s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:0.45}50%{opacity:1}}
+
+    #panel{position:fixed;z-index:30;background:#FFFDF7;
+      border:1px solid var(--line);border-radius:18px;overflow:hidden;
+      display:flex;flex-direction:column;
+      box-shadow:0 26px 70px rgba(44,53,64,0.28), 0 4px 14px rgba(44,53,64,0.10);
+      opacity:0;pointer-events:none;
+      transform:translateY(22px) scale(0.96) rotate(-0.4deg);
+      transition:transform .55s cubic-bezier(.22,.9,.26,1), opacity .4s ease}
+    #panel.open{opacity:1;pointer-events:auto;
+      transform:translateY(0) scale(1) rotate(-0.4deg)}
+    #panel::before{content:'';flex:0 0 5px;background:var(--accent,#3E4A58)}
+    #panel{left:0;right:0;top:0;bottom:0;margin:auto;height:fit-content}
+    @media (max-width:719px){
+      #panel{width:calc(100% - 32px);max-width:440px;max-height:58vh;
+        margin-top:auto;margin-bottom:auto;transform:translateY(26px) scale(0.96) rotate(-0.4deg)}
+    }
+    @media (min-width:720px){
+      #panel{width:450px;max-height:66vh}
+    }
+    #panel .body{padding:24px 28px 26px;overflow-y:auto;overscroll-behavior:contain}
+    .kicker{display:flex;align-items:center;gap:8px;font-size:12px;
+      letter-spacing:0.08em;text-transform:uppercase;font-weight:500}
+    .kicker .dot{width:9px;height:9px;border-radius:50%}
+    #panel h2{font-family:'Newsreader Variable',serif;font-weight:400;font-size:26px;
+      line-height:1.28;margin:12px 0 6px;color:var(--ink)}
+    .meta{font-family:'Newsreader Variable',serif;font-style:italic;font-size:14px;
+      color:var(--ink-soft)}
+    .abstract{margin-top:16px;font-size:15px;line-height:1.75;color:#454E59;
+      font-weight:300}
+    .ext{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px}
+    .extlink{font-family:'Spline Sans',sans-serif;font-size:12.5px;font-weight:500;
+      color:var(--ink);text-decoration:none;border:1px solid var(--line);
+      border-radius:100px;padding:6px 14px;background:rgba(44,53,64,0.03);
+      transition:background .2s,border-color .2s}
+    .extlink:hover{background:rgba(44,53,64,0.07);border-color:var(--ink-soft)}
+    .links{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+    .links .label{font-family:'Newsreader Variable',serif;font-style:italic;font-size:14px;
+      color:var(--ink-soft);margin-bottom:8px}
+    .conn{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:0 -12px;
+      border-radius:12px;cursor:pointer;font-size:14px;color:var(--ink);
+      transition:background .2s}
+    .conn:hover,.conn:active{background:rgba(44,53,64,0.05)}
+    .conn .dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+    .conn span{flex:1}
+    .conn .arr{color:var(--ink-soft);font-size:13px}
+    #close{position:absolute;top:14px;right:16px;width:34px;height:34px;border:none;
+      border-radius:50%;background:rgba(44,53,64,0.06);color:var(--ink-soft);
+      font-size:15px;cursor:pointer;line-height:1}
+
+    #tour{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:25;
+      display:flex;flex-direction:column;align-items:center;gap:6px}
+    #tour button{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);
+      background:rgba(255,253,247,0.9);color:var(--ink);font-size:16px;cursor:pointer;
+      box-shadow:0 1px 4px rgba(44,53,64,0.08);transition:opacity .25s}
+    #tour button:disabled{opacity:0.25;cursor:default}
+    #tour .where{font-family:'Newsreader Variable',serif;font-style:italic;font-size:13px;
+      color:var(--ink-soft);padding:4px 0;white-space:nowrap}
+
+    @media (prefers-reduced-motion:reduce){
+      #intro .hint{animation:none}
+      #panel{transition:none}
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+
+  <header>
+    <div class="name">Cillian Hourican</div>
+    <div class="tagline">a map of my research, drawn as it actually connects</div>
+  </header>
+
+  <a class="backlink" href="/">← back to site</a>
+
+  <div id="intro">
+    <h1>My work, <i>laid out as a map.</i></h1>
+    <p>Every circle is something I've made — a paper, a project, a talk, a course. The lines show how they belong together. Wander around, and tap anything that looks interesting.</p>
+    <div class="hint">tap to step in — then scroll to be shown around</div>
+  </div>
+
+  <div id="tour">
+    <button id="t-prev" aria-label="Previous stop">↑</button>
+    <div class="where" id="t-where">start</div>
+    <button id="t-next" aria-label="Next stop">↓</button>
+  </div>
+
+  <div class="legend" id="legend"></div>
+
+  <aside id="panel">
+    <button id="close" aria-label="Close">✕</button>
+    <div class="body">
+      <div class="kicker" id="p-kicker"></div>
+      <h2 id="p-title"></h2>
+      <div class="meta" id="p-meta"></div>
+      <div class="abstract" id="p-abs"></div>
+      <div class="ext" id="p-ext"></div>
+      <div class="links"><div class="label">This connects to…</div><div id="p-conns"></div></div>
+    </div>
+  </aside>
+
+  <script type="application/json" id="map-data" set:html={mapData}></script>
+
+  <script>
+    const _DATA = JSON.parse(document.getElementById('map-data')!.textContent!);
+    const NODES = _DATA.nodes;
+    const LINKS = _DATA.links;
+
+    function getCSS(v: string) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+    const TYPES: Record<string, { label: string; color: string; r: number }> = {
+      hub:     { label: 'Research themes', color: getCSS('--c-hub'),     r: 24 },
+      paper:   { label: 'Papers',          color: getCSS('--c-paper'),   r: 15 },
+      project: { label: 'Projects',        color: getCSS('--c-project'), r: 15 },
+      talk:    { label: 'Talks',           color: getCSS('--c-talk'),    r: 12 },
+      teach:   { label: 'Teaching',        color: getCSS('--c-teach'),   r: 12 },
+    };
+
+    const canvas = document.getElementById('c') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d')!;
+    let W: number, H: number, DPR: number;
+    function resize() {
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W * DPR; canvas.height = H * DPR;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+    resize(); addEventListener('resize', resize);
+
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    NODES.forEach((n: any, i: number) => {
+      const a = (i / NODES.length) * Math.PI * 2;
+      const rad = n.type === 'hub' ? 60 : 175;
+      n.x = W / 2 + Math.cos(a) * rad + (Math.random() - 0.5) * 40;
+      n.y = H / 2 + Math.sin(a) * rad + (Math.random() - 0.5) * 40;
+      n.vx = 0; n.vy = 0;
+      n.r = TYPES[n.type].r;
+      n.phase = Math.random() * Math.PI * 2;
+      n.wob = Array.from({ length: 8 }, () => 0.82 + Math.random() * 0.36);
+    });
+    const byId: Record<string, any> = Object.fromEntries(NODES.map((n: any) => [n.id, n]));
+    const EDGES = LINKS.map(([a, b]: [string, string]) => ({ a: byId[a], b: byId[b], bow: (Math.random() - 0.5) * 0.5 }))
+      .filter((e: any) => e.a && e.b);
+    const neighbors: Record<string, Set<string>> = {};
+    EDGES.forEach((e: any) => {
+      (neighbors[e.a.id] = neighbors[e.a.id] || new Set()).add(e.b.id);
+      (neighbors[e.b.id] = neighbors[e.b.id] || new Set()).add(e.a.id);
+    });
+
+    let cam = { x: 0, y: 0, zoom: 1, tx: 0, ty: 0, tzoom: 1 };
+    let activeTypes = new Set(Object.keys(TYPES));
+    let selected: any = null;
+    let hovered: any = null;
+    let dragNode: any = null, panning = false, moved = false;
+    let ripples: any[] = [];
+    let veil = 0;
+
+    function step() {
+      const cx = W / 2, cy = H / 2;
+      for (let i = 0; i < NODES.length; i++) {
+        for (let j = i + 1; j < NODES.length; j++) {
+          const A = NODES[i], B = NODES[j];
+          let dx = B.x - A.x, dy = B.y - A.y;
+          let d2 = dx * dx + dy * dy; if (d2 < 1) d2 = 1;
+          const d = Math.sqrt(d2);
+          const rep = 2400 / (d2);
+          const fx = dx / d * rep, fy = dy / d * rep;
+          A.vx -= fx; A.vy -= fy; B.vx += fx; B.vy += fy;
+        }
+      }
+      EDGES.forEach((e: any) => {
+        const rest = (e.a.type === 'hub' || e.b.type === 'hub') ? 115 : 95;
+        let dx = e.b.x - e.a.x, dy = e.b.y - e.a.y;
+        const d = Math.sqrt(dx * dx + dy * dy) || 1;
+        const f = (d - rest) * 0.003;
+        const fx = dx / d * f, fy = dy / d * f;
+        e.a.vx += fx; e.a.vy += fy; e.b.vx -= fx; e.b.vy -= fy;
+      });
+      if (selected) {
+        (neighbors[selected.id] || new Set()).forEach((id) => {
+          const m = byId[id];
+          m.vx += (selected.x - m.x) * 0.0004;
+          m.vy += (selected.y - m.y) * 0.0004;
+        });
+      }
+      NODES.forEach((n: any) => {
+        n.vx += (cx - n.x) * 0.0007;
+        n.vy += (cy - n.y) * 0.0007;
+        if (n !== dragNode) {
+          n.vx *= 0.78; n.vy *= 0.78;
+          n.vx = Math.max(-2.2, Math.min(2.2, n.vx));
+          n.vy = Math.max(-2.2, Math.min(2.2, n.vy));
+          n.x += n.vx; n.y += n.vy;
+        }
+      });
+      cam.x += (cam.tx - cam.x) * 0.025;
+      cam.y += (cam.ty - cam.y) * 0.025;
+      cam.zoom += (cam.tzoom - cam.zoom) * 0.025;
+    }
+
+    let t = 0;
+    const speckles = Array.from({ length: 90 }, () => ({ x: Math.random(), y: Math.random(), r: Math.random() * 1.0 + 0.3 }));
+    function visible(n: any) { return activeTypes.has(n.type); }
+
+    function blobPath(n: any, R: number) {
+      const k = n.wob.length;
+      ctx.beginPath();
+      for (let i = 0; i <= k; i++) {
+        const idx = i % k;
+        const a = (idx / k) * Math.PI * 2 + n.phase;
+        const wr = R * n.wob[idx];
+        const x = n.x + Math.cos(a) * wr;
+        const y = n.y + Math.sin(a) * wr;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+    }
+
+    function draw() {
+      t += reduced ? 0 : 0.016;
+      ctx.clearRect(0, 0, W, H);
+      const wash = ctx.createRadialGradient(W / 2, H * 0.42, 80, W / 2, H * 0.42, Math.max(W, H) * 0.8);
+      wash.addColorStop(0, '#F7F3E9');
+      wash.addColorStop(1, '#EDE6D4');
+      ctx.fillStyle = wash;
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = 'rgba(44,53,64,0.08)';
+      speckles.forEach((s) => { ctx.beginPath(); ctx.arc(s.x * W, s.y * H, s.r, 0, 7); ctx.fill(); });
+
+      ctx.save();
+      ctx.translate(W / 2, H / 2);
+      ctx.scale(cam.zoom, cam.zoom);
+      ctx.translate(-W / 2 - cam.x, -H / 2 - cam.y);
+
+      const selSet = selected ? neighbors[selected.id] : null;
+
+      EDGES.forEach((e: any) => {
+        if (!visible(e.a) || !visible(e.b)) return;
+        let alpha = 0.35;
+        const involved = selected && (e.a === selected || e.b === selected);
+        if (selected) alpha = involved ? 0.85 : 0.08;
+        const mx = (e.a.x + e.b.x) / 2, my = (e.a.y + e.b.y) / 2;
+        const dx = e.b.x - e.a.x, dy = e.b.y - e.a.y;
+        const cxp = mx - dy * e.bow * 0.3;
+        const cyp = my + dx * e.bow * 0.3;
+        ctx.globalAlpha = alpha;
+        ctx.strokeStyle = involved ? '#3E4A58' : '#5A6470';
+        ctx.lineWidth = (involved ? 1.5 : 1.1) / cam.zoom;
+        ctx.setLineDash([1.5 / cam.zoom, 5 / cam.zoom]);
+        ctx.lineDashOffset = involved && !reduced ? -t * 22 / cam.zoom : 0;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(e.a.x, e.a.y);
+        ctx.quadraticCurveTo(cxp, cyp, e.b.x, e.b.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.lineDashOffset = 0;
+      });
+      ctx.globalAlpha = 1;
+
+      ripples = ripples.filter((rp) => rp.alpha > 0.01);
+      ripples.forEach((rp) => {
+        ctx.globalAlpha = rp.alpha;
+        ctx.strokeStyle = rp.color;
+        ctx.lineWidth = 1.6 / cam.zoom;
+        ctx.beginPath(); ctx.arc(rp.x, rp.y, rp.r, 0, 7); ctx.stroke();
+        rp.r += reduced ? 4 : 2.2;
+        rp.alpha *= 0.93;
+      });
+      ctx.globalAlpha = 1;
+
+      NODES.forEach((n: any) => {
+        if (!visible(n)) return;
+        const col = TYPES[n.type].color;
+        const isSel = n === selected;
+        const isHov = n === hovered && !isSel;
+        const isNb = selSet && selSet.has(n.id);
+        const dimmed = selected && !isSel && !isNb;
+        const breathe = reduced ? 0 : Math.sin(t * 0.8 + n.phase) * 0.35;
+        const R = n.r + (isSel ? 4 : 0) + (isHov ? 2.5 : 0) + breathe;
+
+        ctx.globalAlpha = dimmed ? 0.22 : 1;
+        ctx.fillStyle = col;
+        ctx.globalAlpha = (dimmed ? 0.06 : 0.16);
+        blobPath({ ...n, x: n.x + 2.5, y: n.y + 2 }, R * 1.5); ctx.fill();
+        ctx.globalAlpha = (dimmed ? 0.08 : 0.26);
+        blobPath({ ...n, x: n.x - 1.5, y: n.y + 1 }, R * 1.22); ctx.fill();
+        ctx.globalAlpha = (dimmed ? 0.16 : 0.75);
+        blobPath(n, R); ctx.fill();
+
+        ctx.globalAlpha = dimmed ? 0.15 : (isHov || isSel ? 0.9 : 0.55);
+        ctx.strokeStyle = '#3E4A58';
+        ctx.lineWidth = ((n.type === 'hub' ? 1.4 : 1) + (isHov ? 0.4 : 0)) / cam.zoom;
+        blobPath(n, R); ctx.stroke();
+
+        ctx.globalAlpha = dimmed ? 0.25 : 1;
+        if (n.type === 'hub') {
+          ctx.fillStyle = '#2C3540';
+          ctx.font = `italic 500 ${14.5 / cam.zoom}px 'Newsreader Variable', serif`;
+        } else {
+          ctx.fillStyle = '#454E59';
+          ctx.font = `300 ${11.5 / cam.zoom}px 'Spline Sans', sans-serif`;
+        }
+        ctx.textAlign = 'center';
+        const label = n.type === 'hub' ? n.title : truncate(n.title, 24);
+        const tw = ctx.measureText(label).width;
+        ctx.save();
+        ctx.globalAlpha = (dimmed ? 0.2 : 0.75);
+        ctx.fillStyle = '#F4EFE4';
+        ctx.fillRect(n.x - tw / 2 - 4 / cam.zoom, n.y + R + 6 / cam.zoom, tw + 8 / cam.zoom, 15 / cam.zoom);
+        ctx.restore();
+        ctx.globalAlpha = dimmed ? 0.35 : 1;
+        ctx.fillStyle = n.type === 'hub' ? '#2C3540' : '#454E59';
+        ctx.fillText(label, n.x, n.y + R + 17 / cam.zoom);
+      });
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      veil += ((selected ? 0.38 : 0) - veil) * 0.06;
+      if (veil > 0.005) {
+        ctx.fillStyle = `rgba(244,239,228,${veil})`;
+        ctx.fillRect(0, 0, W, H);
+      }
+    }
+    function truncate(s: string, n: number) { return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+
+    function loop() { step(); draw(); requestAnimationFrame(loop); }
+    for (let i = 0; i < 500; i++) step();
+    NODES.forEach((n: any) => { n.vx = 0; n.vy = 0; });
+    loop();
+
+    function toWorld(px: number, py: number) {
+      return { x: (px - W / 2) / cam.zoom + W / 2 + cam.x, y: (py - H / 2) / cam.zoom + H / 2 + cam.y };
+    }
+    function nodeAt(px: number, py: number) {
+      const w = toWorld(px, py);
+      let best: any = null, bd = 1e9;
+      NODES.forEach((n: any) => {
+        if (!visible(n)) return;
+        const d = Math.hypot(n.x - w.x, n.y - w.y);
+        if (d < n.r + 18 && d < bd) { best = n; bd = d; }
+      });
+      return best;
+    }
+
+    let last = { x: 0, y: 0 }, start = { x: 0, y: 0 }, gestureAxis: string | null = null, pinchD = 0;
+
+    canvas.addEventListener('pointerdown', (e) => {
+      canvas.setPointerCapture(e.pointerId);
+      moved = false; gestureAxis = null;
+      last = { x: e.clientX, y: e.clientY };
+      start = { x: e.clientX, y: e.clientY };
+      const n = nodeAt(e.clientX, e.clientY);
+      if (n) { dragNode = n; } else { panning = true; }
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      const dx = e.clientX - last.x, dy = e.clientY - last.y;
+      if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
+      if (dragNode) {
+        const w = toWorld(e.clientX, e.clientY);
+        dragNode.x = w.x; dragNode.y = w.y; dragNode.vx = 0; dragNode.vy = 0;
+      } else if (panning) {
+        if (!gestureAxis) {
+          const tdx = Math.abs(e.clientX - start.x), tdy = Math.abs(e.clientY - start.y);
+          if (tdx > 8 || tdy > 8) gestureAxis = tdy > tdx ? 'v' : 'h';
+        }
+        if (gestureAxis === 'h') {
+          canvas.classList.add('dragging');
+          cam.tx -= dx / cam.zoom; cam.ty -= dy / cam.zoom;
+          cam.x = cam.tx; cam.y = cam.ty;
+        }
+      } else {
+        hovered = nodeAt(e.clientX, e.clientY);
+        canvas.style.cursor = hovered ? 'pointer' : 'grab';
+      }
+      last = { x: e.clientX, y: e.clientY };
+    });
+    canvas.addEventListener('pointerup', (e) => {
+      canvas.classList.remove('dragging');
+      if (!moved) {
+        const n = nodeAt(e.clientX, e.clientY);
+        if (n) select(n); else deselect();
+      } else if (gestureAxis === 'v' && !dragNode) {
+        const dy = e.clientY - start.y;
+        if (dy < -45) tourStep(1);
+        else if (dy > 45) tourStep(-1);
+      }
+      dragNode = null; panning = false; gestureAxis = null;
+    });
+
+    let wheelAcc = 0, wheelLock = false;
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (e.ctrlKey) {
+        cam.tzoom = Math.min(2.6, Math.max(0.5, cam.tzoom * (e.deltaY < 0 ? 1.08 : 0.93)));
+        return;
+      }
+      if (wheelLock) return;
+      wheelAcc += e.deltaY;
+      if (Math.abs(wheelAcc) > 70) {
+        tourStep(wheelAcc > 0 ? 1 : -1);
+        wheelAcc = 0; wheelLock = true;
+        setTimeout(() => wheelLock = false, 850);
+      }
+    }, { passive: false });
+
+    canvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) { pinchD = dist2(e.touches); }
+    }, { passive: true });
+    canvas.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 2) {
+        const d = dist2(e.touches);
+        cam.tzoom = Math.min(2.6, Math.max(0.5, cam.tzoom * d / pinchD));
+        pinchD = d;
+        dragNode = null; panning = false;
+      }
+    }, { passive: true });
+    function dist2(ts: TouchList) { return Math.hypot(ts[0].clientX - ts[1].clientX, ts[0].clientY - ts[1].clientY); }
+
+    const tourOrder: string[] = _DATA.tour;
+    let tourIndex = -1;
+
+    function tourStep(dir: number) {
+      const next = tourIndex + dir;
+      if (next < -1 || next >= tourOrder.length) return;
+      tourIndex = next;
+      if (tourIndex === -1) { deselect(); return; }
+      const n = byId[tourOrder[tourIndex]];
+      if (!activeTypes.has(n.type)) activeTypes.add(n.type);
+      select(n, true, dir);
+    }
+    function updateTourUI() {
+      const where = document.getElementById('t-where')!;
+      where.textContent = tourIndex === -1 ? 'start' : `${tourIndex + 1} of ${tourOrder.length}`;
+      (document.getElementById('t-prev') as HTMLButtonElement).disabled = tourIndex === -1;
+      (document.getElementById('t-next') as HTMLButtonElement).disabled = tourIndex === tourOrder.length - 1;
+    }
+    (document.getElementById('t-next') as HTMLButtonElement).onclick = () => tourStep(1);
+    (document.getElementById('t-prev') as HTMLButtonElement).onclick = () => tourStep(-1);
+
+    const panel = document.getElementById('panel')!;
+
+    function renderCard(n: any) {
+      const T = TYPES[n.type];
+      panel.style.setProperty('--accent', T.color);
+      const kicker = document.getElementById('p-kicker')!;
+      kicker.innerHTML = `<span class="dot" style="background:${T.color}"></span>${singular(T.label)}`;
+      kicker.style.color = T.color;
+      document.getElementById('p-title')!.textContent = n.title;
+      document.getElementById('p-meta')!.textContent = n.meta;
+      document.getElementById('p-abs')!.textContent = n.abs;
+
+      const ext = document.getElementById('p-ext')!;
+      ext.innerHTML = '';
+      (n.links || []).forEach((l: any) => {
+        const a = document.createElement('a');
+        a.className = 'extlink'; a.href = l.href; a.target = '_blank'; a.rel = 'noopener';
+        a.textContent = l.label;
+        ext.appendChild(a);
+      });
+
+      const conns = document.getElementById('p-conns')!;
+      conns.innerHTML = '';
+      (neighbors[n.id] || new Set()).forEach((id) => {
+        const m = byId[id];
+        const el = document.createElement('div');
+        el.className = 'conn';
+        el.innerHTML = `<span class="dot" style="background:${TYPES[m.type].color}"></span><span>${m.title}</span><span class="arr">→</span>`;
+        el.onclick = () => select(m);
+        conns.appendChild(el);
+      });
+    }
+
+    function swapCard(dir: number, apply: () => void) {
+      const wasOpen = panel.classList.contains('open');
+      if (!wasOpen || reduced) {
+        apply();
+        panel.style.transition = ''; panel.style.transform = ''; panel.style.opacity = '';
+        panel.classList.add('open');
+        return;
+      }
+      panel.style.transition = 'transform .32s ease-in, opacity .3s ease-in';
+      panel.style.transform = `translateY(${dir >= 0 ? 34 : -34}px) rotate(-0.4deg)`;
+      panel.style.opacity = '0';
+      setTimeout(() => {
+        apply();
+        panel.style.transition = 'none';
+        panel.style.transform = `translateY(${dir >= 0 ? -40 : 40}px) rotate(-0.4deg)`;
+        void panel.offsetHeight;
+        panel.style.transition = 'transform .6s cubic-bezier(.22,.9,.26,1), opacity .5s ease';
+        panel.style.transform = 'translateY(0) rotate(-0.4deg)';
+        panel.style.opacity = '1';
+      }, 320);
+    }
+
+    function select(n: any, fromTour?: boolean, dir?: number) {
+      if (dir === undefined) {
+        const i = tourOrder.indexOf(n.id);
+        dir = (i !== -1 && i < tourIndex) ? -1 : 1;
+      }
+      if (!fromTour) {
+        const i = tourOrder.indexOf(n.id);
+        if (i !== -1) tourIndex = i;
+      }
+      updateTourUI();
+      selected = n;
+      ripples.push({ x: n.x, y: n.y, r: n.r + 4, alpha: 0.55, color: TYPES[n.type].color });
+      cam.tzoom = 1.08;
+      const targetY = H * 0.16;
+      cam.tx = n.x - W / 2;
+      cam.ty = n.y - H / 2 - (targetY - H / 2) / cam.tzoom;
+      swapCard(dir, () => renderCard(n));
+    }
+    function singular(s: string) {
+      return ({ 'Papers': 'Paper', 'Projects': 'Project', 'Talks': 'Talk', 'Teaching': 'Teaching', 'Research themes': 'Research theme' } as Record<string, string>)[s] || s;
+    }
+    function deselect() {
+      selected = null;
+      tourIndex = -1;
+      updateTourUI();
+      panel.style.transition = ''; panel.style.transform = ''; panel.style.opacity = '';
+      panel.classList.remove('open');
+      cam.tzoom = 1; cam.tx = 0; cam.ty = 0;
+    }
+    (document.getElementById('close') as HTMLButtonElement).onclick = deselect;
+
+    const legend = document.getElementById('legend')!;
+    Object.entries(TYPES).forEach(([key, T]) => {
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.innerHTML = `<span class="dot" style="background:${T.color}"></span>${T.label}`;
+      chip.onclick = () => {
+        if (activeTypes.has(key) && activeTypes.size > 1) activeTypes.delete(key);
+        else activeTypes.add(key);
+        chip.classList.toggle('faded', !activeTypes.has(key));
+        if (selected && !activeTypes.has(selected.type)) deselect();
+      };
+      legend.appendChild(chip);
+    });
+
+    const intro = document.getElementById('intro')!;
+    let entered = false;
+    function enter(startTour: boolean) {
+      if (entered) return false;
+      entered = true;
+      intro.classList.add('gone');
+      if (startTour) setTimeout(() => tourStep(1), 150);
+      return true;
+    }
+    intro.addEventListener('click', () => enter(false));
+    intro.addEventListener('wheel', (e) => { e.preventDefault(); enter(true); }, { passive: false });
+    intro.addEventListener('touchmove', () => enter(true), { passive: true });
+
+    addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { if (!enter(true)) tourStep(1); }
+      else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { tourStep(-1); }
+      else if (e.key === 'Escape') { deselect(); }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PublicationCard from '../components/PublicationCard.astro';
+
+const pubs = (await getCollection('publications')).map((e) => e.data);
+
+const categories = [
+  { key: 'multimorbidity-health-networks', label: 'Multimorbidity & health networks', blurb: 'Disease and symptom networks, comorbidity, and higher-order structure in ageing cohorts.' },
+  { key: 'information-theory-methods', label: 'Information theory & higher-order interactions', blurb: 'Methods for detecting and estimating synergy, redundancy, and multi-way dependence.' },
+  { key: 'cross-domain-applications', label: 'Cross-domain applications', blurb: 'Applying these tools to problems in other fields.' },
+] as const;
+
+const byCategory = categories.map((c) => ({
+  ...c,
+  items: pubs.filter((p) => p.category === c.key).sort((a, b) => b.year - a.year),
+}));
+---
+<Base title="Publications — Cillian Hourican" description="Peer-reviewed publications by Cillian Hourican in information theory, networks, and multimorbidity, each with a short plain-language summary.">
+  <section class="section container">
+    <div class="section-head">
+      <p class="eyebrow">Publications</p>
+      <h1>Research, with the point of each paper up front.</h1>
+      <p class="muted">Every paper below carries a one- or two-line "why it matters". Grouped by theme; filter to narrow. Prefer to explore visually? <a href="/map">See it all as an interactive map ↗</a></p>
+    </div>
+
+    <div class="filterbar" role="tablist" aria-label="Filter publications by theme">
+      <button class="filter-btn is-active" data-filter="all" role="tab" aria-selected="true">All</button>
+      {categories.map((c) => <button class="filter-btn" data-filter={c.key} role="tab" aria-selected="false">{c.label}</button>)}
+    </div>
+
+    <div class="pub-groups">
+      {byCategory.map((c) => (
+        <section class="pub-group" data-cat={c.key}>
+          <div class="group-head">
+            <h2>{c.label}</h2>
+            <p class="muted">{c.blurb}</p>
+          </div>
+          <div class="grid grid-2 pub-grid">
+            {c.items.map((pub) => <PublicationCard pub={pub} />)}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .filterbar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: var(--sp-5); }
+  .filter-btn {
+    font-family: var(--font-body); font-size: 0.85rem; font-weight: 500;
+    color: var(--muted); background: transparent;
+    border: 1px solid var(--border); border-radius: 999px; padding: 0.4rem 0.9rem; cursor: pointer;
+    transition: color 0.15s var(--ease), border-color 0.15s var(--ease), background 0.15s var(--ease);
+  }
+  .filter-btn:hover { color: var(--ink); border-color: var(--accent); }
+  .filter-btn.is-active { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
+  .pub-groups { display: flex; flex-direction: column; gap: var(--sp-6); }
+  .group-head { margin-bottom: var(--sp-4); }
+  .group-head h2 { font-size: var(--fs-500); }
+  .pub-groups[data-active]:not([data-active='all']) .pub-group:not([data-active-match]) { display: none; }
+</style>
+
+<script>
+  const bar = document.querySelector('.filterbar');
+  const groups = document.querySelector('.pub-groups');
+  bar?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.filter-btn');
+    if (!btn || !groups) return;
+    const filter = btn.dataset.filter!;
+    bar.querySelectorAll('.filter-btn').forEach((b) => {
+      const active = b === btn;
+      b.classList.toggle('is-active', active);
+      b.setAttribute('aria-selected', String(active));
+    });
+    groups.setAttribute('data-active', filter);
+    groups.querySelectorAll<HTMLElement>('.pub-group').forEach((g) => {
+      if (filter === 'all' || g.dataset.cat === filter) g.setAttribute('data-active-match', '');
+      else g.removeAttribute('data-active-match');
+    });
+  });
+</script>

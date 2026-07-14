@@ -1,0 +1,98 @@
+[
+  {
+    "id": "gehlen-o-information",
+    "student": "Johanna Gehlen",
+    "projectTitle": "Bias in O-Information Estimation",
+    "programme": "MSc Computational Science",
+    "level": "MSc",
+    "year": 2023,
+    "role": "Assessor",
+    "blurb": "Investigated finite-sample bias in O-information, a measure of higher-order (synergistic vs. redundant) dependence. The work led to a peer-reviewed publication in Entropy.",
+    "url": "https://doi.org/10.3390/e26100837"
+  },
+  {
+    "id": "van-wijk-dbn-accuracy",
+    "student": "Jacco van Wijk",
+    "projectTitle": "Predicting the Accuracy of Dynamic Bayesian Network Structure Learning Algorithms",
+    "programme": "MSc Computational Science",
+    "level": "MSc",
+    "year": 2023,
+    "role": "Daily supervisor",
+    "blurb": "Benchmarked Bayesian-network structure-learning algorithms on synthetic causal data and predicted their accuracy from dataset and structure properties, aimed at medical causal discovery.",
+    "url": "https://scripties.uba.uva.nl/search?id=record_53883"
+  },
+  {
+    "id": "ullah-evolutionary-synergy",
+    "student": "K. Ullah",
+    "projectTitle": "Survival of the Fittest Structure: Evolutionary Learning of Synergistic Dependencies",
+    "programme": "MSc Computational Science",
+    "level": "MSc",
+    "year": 2026,
+    "role": "Daily supervisor",
+    "blurb": "Introduced a synergy-aware evolutionary Bayesian-network structure learner using interaction-based triplet screening to recover higher-order, XOR-like synergistic dependencies.",
+    "url": "https://scripties.uba.uva.nl/search?id=record_57650"
+  },
+  {
+    "id": "klein-leunk",
+    "student": "D. Klein Leunk",
+    "programme": "MSc Computational Science",
+    "level": "MSc",
+    "role": "Assessor"
+  },
+  {
+    "id": "kuiper",
+    "student": "Leon Kuiper",
+    "programme": "MSc Computational Science",
+    "level": "MSc",
+    "role": "Assessor"
+  },
+  {
+    "id": "nunes",
+    "student": "Sofia Tété Garcia Ramos Nunes",
+    "programme": "MSc Computational Science",
+    "level": "MSc",
+    "role": "Assessor"
+  },
+  {
+    "id": "sitabi",
+    "student": "Jay Sitabi",
+    "programme": "BSc Informatica",
+    "level": "BSc",
+    "role": "Daily supervisor"
+  },
+  {
+    "id": "van-willigen",
+    "student": "Jasper van Willigen",
+    "programme": "BSc Informatica",
+    "level": "BSc",
+    "role": "Daily supervisor"
+  },
+  {
+    "id": "den-boer",
+    "student": "Seda den Boer",
+    "programme": "MSc Computational Science",
+    "level": "MSc",
+    "role": "Assessor"
+  },
+  {
+    "id": "van-de-bunt",
+    "student": "Noah van de Bunt",
+    "projectTitle": "A Bayesian Network Study to Uncover Bridging Mechanisms Causing the Comorbidity of Major Depressive Disorder and Cardio-Metabolic Diseases",
+    "programme": "MSc Computational Science",
+    "level": "MSc",
+    "year": 2023,
+    "role": "Assessor",
+    "url": "https://scripties.uba.uva.nl/search?id=record_53909"
+  },
+  {
+    "id": "kashyap",
+    "student": "N. Kashyap",
+    "projectTitle": "Predictive Modeling of Symptom Reports and Changes in Functional Outcomes in Elderly Suffering from Multi-Morbidity: Leveraging Longitudinal Symptom Data",
+    "programme": "MSc Information Studies (Data Science)",
+    "level": "MSc",
+    "year": 2024,
+    "role": "Daily supervisor",
+    "blurb": "Used the Precipitating Events Project cohort of 754 adults aged 70+ to predict symptom reports and changes in functional outcomes in elderly patients with multimorbidity, comparing random forests, multi-output classifiers and regression on longitudinal symptom data.",
+    "url": "https://scripties.uba.uva.nl/search?id=record_55214"
+  }
+]
